@@ -4,9 +4,10 @@ import queue
 import time
 import math
 import requests
+import pyautogui
 
 def get_external_value_left():
-    URL = "http://10.82.221.221:8080/get?illum"
+    URL = "http://192.168.29.59:8080/get?illum"
     try:
         r = requests.get(URL)
         r.raise_for_status()
@@ -18,7 +19,7 @@ def get_external_value_left():
         return 0
 
 def get_external_value_right():
-    URL = "http://10.82.228.165:8080/get?illum"
+    URL = "http://192.168.29.59:8080/get?illum"
     try:
         r = requests.get(URL)
         r.raise_for_status()
@@ -126,17 +127,31 @@ def main():
                 right_angle = 90
         left_key = "None"
         right_key = "None"
+
         if emulation_active:
             if left_angle is not None:
                 if left_angle >= 60:
                     left_key = "W"
+                    pyautogui.keyDown('w')
+                    time.sleep(2)
+                    pyautogui.keyUp('w')
                 elif left_angle <= 30:
                     left_key = "S"
+                    pyautogui.keyDown('s')
+                    time.sleep(2)
+                    pyautogui.keyUp('s')
             if right_angle is not None:
                 if right_angle >= 60:
                     right_key = "A"
+                    pyautogui.keyDown('a')
+                    time.sleep(2)
+                    pyautogui.keyUp('a')
                 elif right_angle <= 30:
                     right_key = "D"
+                    pyautogui.keyDown('d')
+                    time.sleep(2)
+                    pyautogui.keyUp('d')
+
         screen.fill((255, 255, 255))
         pygame.draw.rect(screen, (200, 200, 200), button_left_cal_high)
         left_cal_high_text = font.render("L Cal High", True, (0, 0, 0))
