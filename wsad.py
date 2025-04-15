@@ -6,7 +6,7 @@ import math
 import requests
 
 def get_external_value_left():
-    URL = "http://10.82.228.42:8080/get?illum"
+    URL = "http://10.82.221.221:8080/get?illum"
     try:
         r = requests.get(URL)
         r.raise_for_status()
@@ -49,7 +49,7 @@ def data_worker_right(data_queue):
 
 def main():
     pygame.init()
-    width, height = 600, 500
+    width, height = 650, 500
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("WASD Emulation via Polarizers")
     clock = pygame.time.Clock()
@@ -74,9 +74,9 @@ def main():
     right_thread.start()
     button_left_cal_high = pygame.Rect(20, 20, 140, 40)
     button_left_cal_low = pygame.Rect(20, 70, 140, 40)
-    button_right_cal_high = pygame.Rect(320, 20, 140, 40)
-    button_right_cal_low = pygame.Rect(320, 70, 140, 40)
-    button_start_stop = pygame.Rect(170, 20, 140, 40)
+    button_right_cal_high = pygame.Rect(490, 20, 140, 40)
+    button_right_cal_low = pygame.Rect(490, 70, 140, 40)
+    button_start_stop = pygame.Rect(255, 20, 140, 40)
     running = True
     while running:
         for event in pygame.event.get():
