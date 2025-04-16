@@ -132,19 +132,23 @@ def main():
             if left_angle is not None:
                 if left_angle >= 60:
                     left_key = "W"
+                    pyautogui.keyUp('s')
                     pyautogui.keyDown('w')
                     
                 elif left_angle <= 30:
                     left_key = "S"
+                    pyautogui.keyUp('w')
                     pyautogui.keyDown('s')
                
             if right_angle is not None:
                 if right_angle >= 60:
                     right_key = "A"
+                    pyautogui.keyUp('d')
                     pyautogui.keyDown('a')
                     
                 elif right_angle <= 30:
                     right_key = "D"
+                    pyautogui.keyUp('a')
                     pyautogui.keyDown('d')
                     
         screen.fill((255, 255, 255))
