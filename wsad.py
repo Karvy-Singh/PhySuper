@@ -133,25 +133,20 @@ def main():
                 if left_angle >= 60:
                     left_key = "W"
                     pyautogui.keyDown('w')
-                    time.sleep(2)
-                    pyautogui.keyUp('w')
+                    
                 elif left_angle <= 30:
                     left_key = "S"
                     pyautogui.keyDown('s')
-                    time.sleep(2)
-                    pyautogui.keyUp('s')
+               
             if right_angle is not None:
                 if right_angle >= 60:
                     right_key = "A"
                     pyautogui.keyDown('a')
-                    time.sleep(2)
-                    pyautogui.keyUp('a')
+                    
                 elif right_angle <= 30:
                     right_key = "D"
                     pyautogui.keyDown('d')
-                    time.sleep(2)
-                    pyautogui.keyUp('d')
-
+                    
         screen.fill((255, 255, 255))
         pygame.draw.rect(screen, (200, 200, 200), button_left_cal_high)
         left_cal_high_text = font.render("L Cal High", True, (0, 0, 0))
@@ -197,6 +192,11 @@ def main():
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
+    pyautogui.keyDown('s')
+    pyautogui.keyDown('a')
+    pyautogui.keyDown('w')
+    pyautogui.keyDown('d')
+
 
 if __name__ == "__main__":
     main()
