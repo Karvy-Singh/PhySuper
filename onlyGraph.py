@@ -5,27 +5,33 @@ import time
 import math
 import requests
 
-def get_external_value():
-    URL = "http://192.168.29.59:8080/get?illum"
-    try:
-        r = requests.get(URL)
-        r.raise_for_status()
-        data = r.json()
-        illum = data["buffer"]["illum"]["buffer"][0]
-        return illum
-    except Exception as e:
-        print("Error in get_external_value:", e)
-        return 0
+import websocket
+data_queue = queue.Queue()
+SERVER_URI = "ws://10.134.21.123:8765"
+def on_message(ws, message):
+    illum = float(message)
+    timestamp = pygame.time.get_ticks() / 1000.0
+    data_queue.put((timestamp, illum))
+
+def on_error(ws, error):
+    print(f"[!] Error: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    print("[!] Connection closed.")
+
+def on_open(ws):
+    print(f"[+] Connected to sensor server at {SERVER_URI}")
+
 
 def data_worker(data_queue):
-    while True:
-        try:
-            illum = get_external_value()
-            timestamp = pygame.time.get_ticks() / 1000.0
-            data_queue.put((timestamp, illum))
-        except Exception as e:
-            print("Error in data_worker:", e)
-
+    ws = websocket.WebSocketApp(
+        SERVER_URI,
+        on_open=on_open,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close,
+    )
+    ws.run_forever()
 def main():
     pygame.init()
     width, height = 900, 600
@@ -38,7 +44,6 @@ def main():
     current_raw_value = 0
     smoothed_value = 0
     smoothing_alpha = 0.1
-    data_queue = queue.Queue()
     worker_thread = threading.Thread(target=data_worker, args=(data_queue,))
     worker_thread.daemon = True
     worker_thread.start()

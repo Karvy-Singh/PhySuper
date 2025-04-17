@@ -6,47 +6,51 @@ import math
 import requests
 import pyautogui
 
-def get_external_value_left():
-    URL = "http://192.168.221.221:8080/get?illum"
-    try:
-        r = requests.get(URL)
-        r.raise_for_status()
-        data = r.json()
-        illum = data["buffer"]["illum"]["buffer"][0]
-        return illum
-    except Exception as e:
-        print("Error in get_external_value_left:", e)
-        return 0
+import websocket
+left_queue = queue.Queue()
+right_queue = queue.Queue()
 
-def get_external_value_right():
-    URL = "http://192.168.221.37:8080/get?illum"
-    try:
-        r = requests.get(URL)
-        r.raise_for_status()
-        data = r.json()
-        illum = data["buffer"]["illum"]["buffer"][0]
-        return illum
-    except Exception as e:
-        print("Error in get_external_value_right:", e)
-        return 0
+def on_message_left(ws, message):
+    illum = float(message)
+    timestamp = pygame.time.get_ticks() / 1000.0
+    left_queue.put((timestamp, illum))
+
+def on_message_right(ws, message):
+    illum = float(message)
+    timestamp = pygame.time.get_ticks() / 1000.0
+    right_queue.put((timestamp, illum))
+
+def on_error(ws, error):
+    print(f"[!] Error: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    print("[!] Connection closed.")
+
+def on_open(ws):
+    print(f"[+] Connected to sensor server at {SERVER_URI}")
+
 
 def data_worker_left(data_queue):
-    while True:
-        try:
-            illum = get_external_value_left()
-            timestamp = pygame.time.get_ticks() / 1000.0
-            data_queue.put((timestamp, illum))
-        except Exception as e:
-            print("Error in data_worker_left:", e)
+    SERVER_URI = "ws://10.134.21.123:8765"
+    ws = websocket.WebSocketApp(
+        SERVER_URI,
+        on_open=on_open,
+        on_message=on_message_left,
+        on_error=on_error,
+        on_close=on_close,
+    )
+    ws.run_forever()
 
 def data_worker_right(data_queue):
-    while True:
-        try:
-            illum = get_external_value_right()
-            timestamp = pygame.time.get_ticks() / 1000.0
-            data_queue.put((timestamp, illum))
-        except Exception as e:
-            print("Error in data_worker_right:", e)
+    SERVER_URI = "ws://10.134.21.123:8765"
+    ws = websocket.WebSocketApp(
+        SERVER_URI,
+        on_open=on_open,
+        on_message=on_message_right,
+        on_error=on_error,
+        on_close=on_close,
+    )
+    ws.run_forever()
 
 def main():
     pygame.init()
@@ -65,8 +69,6 @@ def main():
     right_smoothed = 0
     smoothing_alpha = 0.1
     emulation_active = False
-    left_queue = queue.Queue()
-    right_queue = queue.Queue()
     left_thread = threading.Thread(target=data_worker_left, args=(left_queue,))
     left_thread.daemon = True
     left_thread.start()
