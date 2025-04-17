@@ -7,7 +7,7 @@ import requests
 import pyautogui
 
 def get_external_value_left():
-    URL = "http://192.168.29.59:8080/get?illum"
+    URL = "http://192.168.221.221:8080/get?illum"
     try:
         r = requests.get(URL)
         r.raise_for_status()
@@ -19,7 +19,7 @@ def get_external_value_left():
         return 0
 
 def get_external_value_right():
-    URL = "http://192.168.29.59:8080/get?illum"
+    URL = "http://192.168.221.37:8080/get?illum"
     try:
         r = requests.get(URL)
         r.raise_for_status()
@@ -139,6 +139,9 @@ def main():
                     left_key = "S"
                     pyautogui.keyUp('w')
                     pyautogui.keyDown('s')
+                else:
+                    pyautogui.keyUp('w')
+                    pyautogui.keyUp('s')
                
             if right_angle is not None:
                 if right_angle >= 60:
@@ -150,6 +153,10 @@ def main():
                     right_key = "D"
                     pyautogui.keyUp('a')
                     pyautogui.keyDown('d')
+                else:
+                    pyautogui.keyUp('d')
+                    pyautogui.keyUp('a')
+
                     
         screen.fill((255, 255, 255))
         pygame.draw.rect(screen, (200, 200, 200), button_left_cal_high)
@@ -196,10 +203,10 @@ def main():
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
-    pyautogui.keyDown('s')
-    pyautogui.keyDown('a')
-    pyautogui.keyDown('w')
-    pyautogui.keyDown('d')
+    pyautogui.keyUp('s')
+    pyautogui.keyUp('a')
+    pyautogui.keyUp('w')
+    pyautogui.keyUp('d')
 
 
 if __name__ == "__main__":
